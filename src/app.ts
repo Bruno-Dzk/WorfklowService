@@ -1,10 +1,10 @@
 import express from 'express';
-import LambdaRouter from './routes/LambdaRouter.js'
+import HealthCheckRouter from './routes/HealthCheckRouter.js'
 
 const app = express();
-const port = 3000;
+const port = 3003;
 
-app.use("/lambda", LambdaRouter);
+app.use("/healthcheck", HealthCheckRouter);
 
 app.listen(port, () => {
     return console.log(`Express is listening at http://localhost:${port}`);
