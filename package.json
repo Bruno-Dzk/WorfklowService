@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/app.js",
-    "start:dev": "npm run build && npm run start",
+    "start:dev": "npm run build && ENV=dev npm run start",
     "lint": "eslint . --ext .ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -23,7 +23,10 @@
   },
   "homepage": "https://github.com/Bruno-Dzk/WorfklowService#readme",
   "devDependencies": {
+    "@aws-sdk/types": "^3.734.0",
     "@eslint/js": "^9.21.0",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.9",
     "eslint": "^9.21.0",
     "globals": "^16.0.0",
     "typescript": "^5.7.3",
@@ -31,6 +34,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-lambda": "^3.750.0",
+    "@aws-sdk/credential-providers": "^3.758.0",
     "express": "^4.21.2"
   }
 }

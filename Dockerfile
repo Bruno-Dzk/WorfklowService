@@ -22,6 +22,6 @@ COPY --from=builder /usr/src/app/dist ./dist
 USER node
 
 HEALTHCHECK --interval=1s --timeout=2s \
-  CMD curl -f http://localhost:3000/healthcheck || exit 1
+  CMD curl -f http://localhost:3000/workflow-service/healthcheck || exit 1
 
 CMD ["npm", "start"]
