@@ -21,10 +21,10 @@ export async function createLambda(
         },
         FunctionName: funcName,
         Role: LOGGING_ROLE_ARN,
-        Architectures: [Architecture.arm64],
-        Handler: "hello_world.lambda_handler",
+        Architectures: [Architecture.x86_64],
+        Handler: "lambda_function.lambda_handler",
         PackageType: PackageType.Zip,
-        Runtime: Runtime.python313,
+        Runtime: Runtime.python311,
     });
 
     return client.send(command);
