@@ -42,3 +42,28 @@ jobs:
     - name: Push Docker Image
       run : |
         docker push 314146339425.dkr.ecr.eu-central-1.amazonaws.com/devops15/workflow-service:latest
+
+  deploy_to_ECS:
+    needs: build_and_push_to_ECR
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+
+    steps:
+    - name: AWS Configure Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: eu-central-1
+        role-to-assume: arn:aws:iam::314146339425:role/WorkflowServicePushGithubAction
+        role-session-name: WorkflowServicePushSession
+
+    - name: Stop running task
+      run: |
+        TASKS=$(aws ecs list-tasks --cluster BigTuna --family workflow-service --query "taskArns[]" --output text)
+        for TASK in $TASKS; do
+          aws ecs stop-task --cluster BigTuna --task $TASK --reason "Stopping all tasks for cleanup"
+        done
+
+    - name: Update ECS
+      run: |
+        aws ecs update-service --cluster BigTuna --service worflow-service --force-new-deployment
