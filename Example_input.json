@@ -1,3 +1,4 @@
+// Real input
 {
     "Comment": "A description of my state machine",
     "StartAt": "NaaVRE 01",
@@ -81,3 +82,83 @@
     },
     "QueryLanguage": "JSONata"
   }
+
+// Accepted Input
+  {
+    "Comment": "A description of my state machine",
+    "StartAt": "NaaVRE 01",
+    "States": {
+        "NaaVRE 01": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "Arguments": {
+                "FunctionName": "arn:aws:lambda:eu-west-3:314146339425:function:naavre-function-01:$LATEST",
+                "Payload": {
+                    "metadata": {
+                        "param_greeting_template": "Hello, {}"
+                    }
+                }
+            },
+            "Retry": [
+                {
+                    "ErrorEquals": [
+                        "Lambda.ServiceException",
+                        "Lambda.AWSLambdaException",
+                        "Lambda.SdkClientException",
+                        "Lambda.TooManyRequestsException"
+                    ],
+                    "IntervalSeconds": 1,
+                    "MaxAttempts": 3,
+                    "BackoffRate": 2,
+                    "JitterStrategy": "FULL"
+                }
+            ],
+            "Next": "NaaVRE 02"
+        },
+        "NaaVRE 02": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "Arguments": {
+                "FunctionName": "arn:aws:lambda:eu-west-3:314146339425:function:naavre-function-02:$LATEST"
+            },
+            "Retry": [
+                {
+                    "ErrorEquals": [
+                        "Lambda.ServiceException",
+                        "Lambda.AWSLambdaException",
+                        "Lambda.SdkClientException",
+                        "Lambda.TooManyRequestsException"
+                    ],
+                    "IntervalSeconds": 1,
+                    "MaxAttempts": 3,
+                    "BackoffRate": 2,
+                    "JitterStrategy": "FULL"
+                }
+            ],
+            "Next": "NaaVRE 03"
+        },
+        "NaaVRE 03": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "Arguments": {
+                "FunctionName": "arn:aws:lambda:eu-west-3:314146339425:function:naavre-function-03:$LATEST"
+            },
+            "Retry": [
+                {
+                    "ErrorEquals": [
+                        "Lambda.ServiceException",
+                        "Lambda.AWSLambdaException",
+                        "Lambda.SdkClientException",
+                        "Lambda.TooManyRequestsException"
+                    ],
+                    "IntervalSeconds": 1,
+                    "MaxAttempts": 3,
+                    "BackoffRate": 2,
+                    "JitterStrategy": "FULL"
+                }
+            ],
+            "End": true
+        }
+    },
+    "QueryLanguage": "JSONata"
+}

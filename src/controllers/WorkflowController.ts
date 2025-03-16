@@ -1,0 +1,35 @@
+import { SFNClient, CreateStateMachineCommand, CreateStateMachineCommandInput } from "@aws-sdk/client-sfn";
+
+// Configure the Step Functions client.
+// Change the region to Frankfurt later
+const stepFunctionsClient = new SFNClient({ region: process.env.AWS_REGION || "eu-west-3" });
+
+// Unique Name Generation
+function generateStateMachineName(): string {
+    const timestamp = Date.now();
+    return `StateMachine-${timestamp}`;
+  }
+
+// Create Workflow
+export async function createWorkflow(workflowDefinition: string): Promise<any> {
+  // Use default ARS role
+  const roleArn = "arn:aws:iam::314146339425:role/StepFunctionCreateExecute";
+
+
+  // Build parameters for creating the state machine.
+  const params: CreateStateMachineCommandInput = {
+    name: generateStateMachineName(),
+    definition: JSON.stringify(workflowDefinition),
+    roleArn: roleArn,
+  };
+
+  try {
+    const command = new CreateStateMachineCommand(params);
+    const response = await stepFunctionsClient.send(command);
+    console.log("State machine created successfully:", response);
+    return response;
+  } catch (error) {
+    console.error("Error creating state machine:", error);
+    throw error;
+  }
+}
