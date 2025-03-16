@@ -23,7 +23,6 @@ const client = new LambdaClient({
 
 export async function deleteLambda(lambdaName: string) {
   const input = {
-    // DeleteFunctionRequest
     FunctionName: lambdaName,
   };
   const command = new DeleteFunctionCommand(input);
