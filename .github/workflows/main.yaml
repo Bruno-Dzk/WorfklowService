@@ -13,7 +13,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Check current work directory
-    - run: |
+      run: |
         echo Checking current work directory. It is important since docker must be run from project root directory && \
         pwd
 
