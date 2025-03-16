@@ -19,7 +19,7 @@ jobs:
 
     - name: Build docker
       run: |
-        docker buildx build --platform=linux/amd64 -t devops15/workflow-service
+        docker build . --platform linux/amd64 -t devops15/workflow-service
 
     - name: Docker Retag
       run: |
