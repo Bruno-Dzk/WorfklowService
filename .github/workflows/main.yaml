@@ -66,4 +66,4 @@ jobs:
 
     - name: Update ECS
       run: |
-        aws ecs update-service --cluster BigTuna --service worflow-service --force-new-deployment
+        aws ecs update-service --cluster BigTuna --service workflow-service --force-new-deployment
