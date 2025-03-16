@@ -1,8 +1,22 @@
 import { SFNClient, CreateStateMachineCommand, CreateStateMachineCommandInput } from "@aws-sdk/client-sfn";
+import dotenv from "dotenv";
+
+// Load environment variables from .env file
+dotenv.config();
+
+// Use environment variables instead of hardcoding values
+const LAMBDA_REGION = process.env.LAMBDA_REGION || "eu-west-3";
+const ROLE_ARN = process.env.ROLE_ARN || "";
 
 // Configure the Step Functions client.
 // Change the region to Frankfurt later
-const stepFunctionsClient = new SFNClient({ region: process.env.AWS_REGION || "eu-west-3" });
+const stepFunctionsClient = new SFNClient({
+    region: LAMBDA_REGION,
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || ""
+    }
+  });
 
 // Unique Name Generation
 function generateStateMachineName(): string {
@@ -13,7 +27,7 @@ function generateStateMachineName(): string {
 // Create Workflow
 export async function createWorkflow(workflowDefinition: string): Promise<any> {
   // Use default ARS role
-  const roleArn = "arn:aws:iam::314146339425:role/StepFunctionCreateExecute";
+  const roleArn = ROLE_ARN;
 
 
   // Build parameters for creating the state machine.
