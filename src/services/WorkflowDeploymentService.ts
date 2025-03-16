@@ -3,9 +3,18 @@ import { WorkflowDeployment } from "../schemas/WorkflowDeploymentSchema.js";
 
 const LAYER_POSTFIX = "-layer.zip";
 
+export class DeploymentInfo {
+  functions: string[];
+
+  constructor(functions: string[]) {
+    this.functions = functions;
+  }
+}
+
 export async function createDeployment(deployment: WorkflowDeployment) {
   const layerArn = await deployLayer(deployment);
-  await deployLambdas(deployment, layerArn);
+  const arns = await deployLambdas(deployment, layerArn);
+  return new DeploymentInfo(arns);
 }
 
 async function deployLambdas(deployment: WorkflowDeployment, layerArn: string) {
@@ -13,15 +22,14 @@ async function deployLambdas(deployment: WorkflowDeployment, layerArn: string) {
     (path) => !path.endsWith(LAYER_POSTFIX),
   );
 
+  const arns: string[] = [];
   for (const s3key of lambdas) {
     const lambdaName = s3key.split(".").at(0).replaceAll("/", "_");
-    const response = await LambdaClient.createLambda(
-      s3key,
-      lambdaName,
-      layerArn,
-    );
-    console.log(response);
+    await LambdaClient.deleteLambda(lambdaName);
+    const arn = await LambdaClient.createLambda(s3key, lambdaName, layerArn);
+    arns.push(arn);
   }
+  return arns;
 }
 
 async function deployLayer(deployment: WorkflowDeployment) {

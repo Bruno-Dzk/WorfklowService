@@ -6,6 +6,7 @@ import {
   LambdaClient,
   PackageType,
   Runtime,
+  DeleteFunctionCommand,
 } from "@aws-sdk/client-lambda";
 import * as AwsUtils from "../utils/AwsUtils.js";
 
@@ -20,6 +21,15 @@ const client = new LambdaClient({
   region: LAMBDA_REGION,
 });
 
+export async function deleteLambda(lambdaName: string) {
+  const input = {
+    // DeleteFunctionRequest
+    FunctionName: lambdaName,
+  };
+  const command = new DeleteFunctionCommand(input);
+  await client.send(command);
+}
+
 export async function createLambda(
   s3Key: string,
   lambdaName: string,
@@ -30,6 +40,7 @@ export async function createLambda(
       S3Bucket: SOURCE_CODE_S3_BUCKET,
       S3Key: s3Key,
     },
+    Publish: true,
     Layers: [layerArn],
     FunctionName: lambdaName,
     Role: LOGGING_ROLE_ARN,
@@ -39,7 +50,8 @@ export async function createLambda(
     Runtime: Runtime.python311,
   });
 
-  return client.send(command);
+  const { FunctionArn } = await client.send(command);
+  return FunctionArn;
 }
 
 export async function publishLayer(layerKey: string, layerName: string) {
