@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 // Load environment variables from .env file
 dotenv.config();
 
-// Use environment variables instead of hardcoding values
+// coming from .env file (.gitignored)
 const LAMBDA_REGION = process.env.LAMBDA_REGION || "eu-west-3";
 const ROLE_ARN = process.env.ROLE_ARN || "";
 
@@ -21,11 +21,11 @@ const stepFunctionsClient = new SFNClient({
 // Unique Name Generation
 function generateStateMachineName(): string {
     const timestamp = Date.now();
-    return `StateMachine-${timestamp}`;
+    return `Workflow-${timestamp}`;
   }
 
 // Create Workflow
-export async function createWorkflow(workflowDefinition: string): Promise<any> {
+export async function createWorkflow(workflowDefinition): Promise<any> {
   // Use default ARS role
   const roleArn = ROLE_ARN;
 

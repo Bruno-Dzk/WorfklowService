@@ -162,3 +162,39 @@
     },
     "QueryLanguage": "JSONata"
 }
+
+
+NEW USER INPUT
+
+{
+    "Comment": "A description of my state machine",
+    "StartAt": "NaaVRE 01",
+    "States": {
+        "NaaVRE 01": {
+            "Type": "Task",
+            "Arguments": {
+                "FunctionName": "arn:aws:lambda:eu-west-3:314146339425:function:naavre-function-01:$LATEST",
+                "Payload": {
+                    "metadata": {
+                        "param_greeting_template": "Hello, {}"
+                    }
+                }
+            },
+            "Next": "NaaVRE 02"
+        },
+        "NaaVRE 02": {
+            "Type": "Task",
+            "Arguments": {
+                "FunctionName": "arn:aws:lambda:eu-west-3:314146339425:function:naavre-function-02:$LATEST"
+            },
+            "Next": "NaaVRE 03"
+        },
+        "NaaVRE 03": {
+            "Type": "Task",
+            "Arguments": {
+                "FunctionName": "arn:aws:lambda:eu-west-3:314146339425:function:naavre-function-03:$LATEST"
+            },
+            "End": true
+        }
+    },
+}
