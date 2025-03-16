@@ -1,8 +1,10 @@
 import { Router, Request, Response } from 'express';
 import { createWorkflow } from '../controllers/WorkflowController.js';
 import { transformWorkflow, NewWorkflowInput } from "../services/WorkflowTransformService.js";
+import AWS from 'aws-sdk';
 
  const router = Router();
+ const stepfunctions = new AWS.StepFunctions();
 
  /**
   * PUT /workflow
@@ -33,8 +35,21 @@ import { transformWorkflow, NewWorkflowInput } from "../services/WorkflowTransfo
     }
 });
 
-router.get('/', (req: Request, res: Response) => {
-    res.send('GET endpoint is working but empty!');
+router.get('/', async(req: Request, res: Response) => {
+    console.log("GET /workflow called");
+    try {
+        // List state machines using AWS Step Functions API
+        const data = await stepfunctions.listStateMachines().promise();
+        // Extract the state machine names
+        const stateMachineNames = data.stateMachines.map(sm => sm.name);
+        res.status(200).json({ stateMachines: stateMachineNames });
+    } catch (error) {
+        console.error('Error listing state machines:', error);
+        res.status(500).json({
+            message: 'Error listing state machines',
+            error: error instanceof Error ? error.message : error
+        });
+    }
   });
 
  export default router;
