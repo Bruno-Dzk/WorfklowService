@@ -17,8 +17,7 @@ import { transformWorkflow, NewWorkflowInput } from "../services/WorkflowTransfo
 
         // VALIDATION MISSING, add later
 
-        const awsWorkflow = transformWorkflow(aws_workflowDefinition);
-        const result = await createWorkflow(awsWorkflow)
+        const result = await createWorkflow(aws_workflowDefinition)
 
         res.status(201).json({
             message: 'Workflow created successfully',

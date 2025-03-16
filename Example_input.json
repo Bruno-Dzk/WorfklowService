@@ -83,7 +83,7 @@
     "QueryLanguage": "JSONata"
   }
 
-// Accepted Input
+// Accepted AWS Input format
   {
     "Comment": "A description of my state machine",
     "StartAt": "NaaVRE 01",
@@ -196,5 +196,5 @@ NEW USER INPUT
             },
             "End": true
         }
-    },
+    }
 }
