@@ -1,6 +1,5 @@
 import { Router, Request, Response } from 'express';
 import { createWorkflow } from '../controllers/WorkflowController.js';
-import { transformWorkflow, NewWorkflowInput } from "../services/WorkflowTransformService.js";
 import AWS from 'aws-sdk';
 
  const router = Router();
@@ -14,12 +13,11 @@ import AWS from 'aws-sdk';
  router.put('/', async(req: Request, res: Response) => {
     console.log("PUT /workflow called");
     try{
-        const user_workflowDefinition = req.body;
-        const aws_workflowDefinition = transformWorkflow(user_workflowDefinition)
+        const workflowDefinition = req.body;
 
         // VALIDATION MISSING, add later
 
-        const result = await createWorkflow(aws_workflowDefinition)
+        const result = await createWorkflow(workflowDefinition)
 
         res.status(201).json({
             message: 'Workflow created successfully',
