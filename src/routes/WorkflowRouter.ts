@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { createWorkflow } from '../controllers/WorkflowController.js';
+import { createWorkflow, deleteWorkflow } from '../controllers/WorkflowController.js';
 import AWS from 'aws-sdk';
 
  const router = Router();
@@ -49,5 +49,22 @@ router.get('/', async(req: Request, res: Response) => {
         });
     }
   });
+
+  router.delete('/:workflowName', async (req: Request, res: Response) => {
+    const { workflowName } = req.params;
+    console.log(`DELETE /${workflowName} called`);
+
+    try {
+        // Creating ARN of the state machine
+        const result = await deleteWorkflow(workflowName)
+
+        res.status(200).json({ message: `Workflow ${workflowName} deleted successfully from AWS` });
+
+    }catch (error: any) {
+        console.error("Error deleting workflow:", error);
+        res.status(500).json({ message: error.message || "Internal Server Error" });
+    }
+
+});
 
  export default router;

@@ -1,4 +1,4 @@
-import { SFNClient, CreateStateMachineCommand, CreateStateMachineCommandInput } from "@aws-sdk/client-sfn";
+import { SFNClient, CreateStateMachineCommand, CreateStateMachineCommandInput, DeleteStateMachineCommand } from "@aws-sdk/client-sfn";
 import dotenv from "dotenv";
 
 // Load environment variables from .env file
@@ -46,4 +46,19 @@ export async function createWorkflow(workflowDefinition): Promise<any> {
     console.error("Error creating state machine:", error);
     throw error;
   }
+}
+
+export async function deleteWorkflow(workflowName: string) {
+    try {
+        const stateMachineArn = `arn:aws:states:eu-central-1:314146339425:stateMachine:${workflowName}`;
+
+        const command = new DeleteStateMachineCommand({ stateMachineArn });
+        await stepFunctionsClient.send(command);
+
+        console.log(`Workflow ${workflowName} deleted successfully`);
+        return { message: `Workflow ${workflowName} deleted successfully` };
+    } catch (error: any) {
+        console.error("Error deleting workflow:", error);
+        throw new Error(error.message);
+    }
 }
