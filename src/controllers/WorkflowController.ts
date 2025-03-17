@@ -1,4 +1,4 @@
-import { SFNClient, CreateStateMachineCommand, CreateStateMachineCommandInput, DeleteStateMachineCommand } from "@aws-sdk/client-sfn";
+import { SFNClient, CreateStateMachineCommand, CreateStateMachineCommandInput, DeleteStateMachineCommand, DescribeStateMachineCommand} from "@aws-sdk/client-sfn";
 import dotenv from "dotenv";
 
 // Load environment variables from .env file
@@ -7,6 +7,7 @@ dotenv.config();
 // coming from .env file (.gitignored)
 const LAMBDA_REGION = process.env.LAMBDA_REGION || "eu-west-3";
 const ROLE_ARN = process.env.ROLE_ARN || "";
+const AWS_ACCOUNT = process.env.AWS_ACCOUNT || "";
 
 // Configure the Step Functions client.
 // Change the region to Frankfurt later
@@ -50,7 +51,7 @@ export async function createWorkflow(workflowDefinition): Promise<any> {
 
 export async function deleteWorkflow(workflowName: string) {
     try {
-        const stateMachineArn = `arn:aws:states:eu-central-1:314146339425:stateMachine:${workflowName}`;
+        const stateMachineArn = `arn:aws:states:${LAMBDA_REGION}:${AWS_ACCOUNT}:stateMachine:${workflowName}`;
 
         const command = new DeleteStateMachineCommand({ stateMachineArn });
         await stepFunctionsClient.send(command);
@@ -61,4 +62,19 @@ export async function deleteWorkflow(workflowName: string) {
         console.error("Error deleting workflow:", error);
         throw new Error(error.message);
     }
+}
+
+// Get Workflow (State Machine) Description (json) from AWS
+export async function getWorkflowDescription(workflowName: string) {
+  try {
+      const stateMachineArn = `arn:aws:states:${LAMBDA_REGION}:${AWS_ACCOUNT}:stateMachine:${workflowName}`;
+
+      const command = new DescribeStateMachineCommand({ stateMachineArn });
+      const response = await stepFunctionsClient.send(command);
+
+      return JSON.parse(response.definition);
+  } catch (error: any) {
+      console.error("Error fetching state machine details:", error);
+      throw new Error(error.message);
+  }
 }
