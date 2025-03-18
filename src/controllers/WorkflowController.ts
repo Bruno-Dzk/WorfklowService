@@ -6,17 +6,20 @@ import {
   DescribeStateMachineCommand
 } from "@aws-sdk/client-sfn";
 import * as AwsUtils from "../utils/AwsUtils.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 // coming from .env file (.gitignored)
 const LAMBDA_REGION = "eu-central-1";
 const ROLE_ARN = "arn:aws:iam::314146339425:role/StepFunctionCreateExecute";
 const AWS_ACCOUNT = "314146339425";
 
-// Configure the Step Functions client.
+// Creating a client and accesing credentials
 const stepFunctionsClient = new SFNClient({
-    credentials: AwsUtils.getCredentialProvider(),
-    region: LAMBDA_REGION,
-  });
+  region: LAMBDA_REGION,
+  credentials: AwsUtils.getCredentialProvider(),
+});
 
 // Unique Name Generation
 function generateStateMachineName(): string {
@@ -45,6 +48,7 @@ export async function createWorkflow(workflowDefinition): Promise<any> {
   }
 }
 
+// Delete existing workflows
 export async function deleteWorkflow(workflowName: string) {
     try {
         const stateMachineArn = `arn:aws:states:${LAMBDA_REGION}:${AWS_ACCOUNT}:stateMachine:${workflowName}`;
