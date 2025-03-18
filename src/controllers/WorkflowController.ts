@@ -5,9 +5,10 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // coming from .env file (.gitignored)
-const LAMBDA_REGION = process.env.LAMBDA_REGION || "eu-west-3";
-const ROLE_ARN = process.env.ROLE_ARN || "";
-const AWS_ACCOUNT = process.env.AWS_ACCOUNT || "";
+const LAMBDA_REGION = "eu-central-1";
+const ROLE_ARN = "arn:aws:iam::314146339425:role/StepFunctionCreateExecute";
+const AWS_ACCOUNT = "314146339425";
+
 
 // Configure the Step Functions client.
 // Change the region to Frankfurt later
