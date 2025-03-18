@@ -1,14 +1,15 @@
+import {
+    createWorkflow,
+    deleteWorkflow,
+    getWorkflowDescription,
+    getWorkflows}
+    from '../controllers/WorkflowController.js';
 import { Router, Request, Response } from 'express';
-import { createWorkflow, deleteWorkflow, getWorkflowDescription } from '../controllers/WorkflowController.js';
 import AWS from 'aws-sdk';
 
  const router = Router();
  const stepfunctions = new AWS.StepFunctions();
 
- /**
-  * PUT /workflow
-  * This endpoint simply accepts the incoming JSON payload and logs it.
-  */
 
  router.put('/', async(req: Request, res: Response) => {
     console.log("PUT /workflow called");
@@ -37,9 +38,7 @@ router.get('/', async(req: Request, res: Response) => {
     console.log("GET /workflow called");
     try {
         // List state machines using AWS Step Functions API
-        const data = await stepfunctions.listStateMachines().promise();
-        // Extract the state machine names
-        const stateMachineNames = data.stateMachines.map(sm => sm.name);
+        const stateMachineNames = await getWorkflows();
         res.status(200).json({ stateMachines: stateMachineNames });
     } catch (error) {
         console.error('Error listing state machines:', error);

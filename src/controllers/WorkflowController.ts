@@ -3,7 +3,8 @@ import {
   CreateStateMachineCommand,
   CreateStateMachineCommandInput,
   DeleteStateMachineCommand,
-  DescribeStateMachineCommand
+  DescribeStateMachineCommand,
+  ListStateMachinesCommand
 } from "@aws-sdk/client-sfn";
 import * as AwsUtils from "../utils/AwsUtils.js";
 import dotenv from "dotenv";
@@ -46,6 +47,19 @@ export async function createWorkflow(workflowDefinition): Promise<any> {
     console.error("Error creating state machine:", error);
     throw error;
   }
+}
+
+// List all existing workflows
+export async function getWorkflows(): Promise<string[]> {
+  const command = new ListStateMachinesCommand({});
+  const data = await stepFunctionsClient.send(command);
+
+  // Catches the case when state machine is undefined (required)
+  return (data.stateMachines || [])
+  .map(sm => sm.name)
+  // handles potential undefined values (required)
+  .filter((name): name is string => name !== undefined);
+
 }
 
 // Delete existing workflows
