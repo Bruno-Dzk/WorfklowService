@@ -9,7 +9,7 @@ const port = 3000;
 const mainRouter = express.Router();
 
 mainRouter.use("/healthcheck", HealthCheckRouter);
-mainRouter.use("/workflow-deployment", WorkflowDeploymentRouter);
+mainRouter.use(WorkflowDeploymentRouter);
 mainRouter.use("/workflow", WorkflowRouter)
 
 app.use(express.json());
@@ -25,5 +25,4 @@ app.use((err, req, res, next) => {
 
 app.listen(port, () => {
   return console.log(`Express is listening at http://localhost:${port}`);
-
 });
