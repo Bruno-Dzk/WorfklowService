@@ -1,6 +1,6 @@
-import express from 'express';
+import express from "express";
 import HealthCheckRouter from "./routes/HealthCheckRouter.js";
-import WorkflowRouter from "./routes/WorkflowRouter.js"
+import WorkflowRouter from "./routes/WorkflowRouter.js";
 import WorkflowDeploymentRouter from "./routes/WorkflowDeploymentRouter.js";
 
 const app = express();
@@ -10,7 +10,7 @@ const mainRouter = express.Router();
 
 mainRouter.use("/healthcheck", HealthCheckRouter);
 mainRouter.use(WorkflowDeploymentRouter);
-mainRouter.use(WorkflowRouter)
+mainRouter.use(WorkflowRouter);
 
 app.use(express.json());
 

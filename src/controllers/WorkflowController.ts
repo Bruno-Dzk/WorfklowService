@@ -4,7 +4,7 @@ import {
   CreateStateMachineCommandInput,
   DeleteStateMachineCommand,
   DescribeStateMachineCommand,
-  ListStateMachinesCommand
+  ListStateMachinesCommand,
 } from "@aws-sdk/client-sfn";
 import * as AwsUtils from "../utils/AwsUtils.js";
 import dotenv from "dotenv";
@@ -24,13 +24,12 @@ const stepFunctionsClient = new SFNClient({
 
 // Unique Name Generation
 function generateStateMachineName(): string {
-    const timestamp = Date.now();
-    return `Workflow-${timestamp}`;
-  }
+  const timestamp = Date.now();
+  return `Workflow-${timestamp}`;
+}
 
 // Create Workflow
 export async function createWorkflow(workflowDefinition): Promise<any> {
-
   // Build parameters for creating the state machine.
   const params: CreateStateMachineCommandInput = {
     name: generateStateMachineName(),
@@ -50,11 +49,12 @@ export async function getWorkflows(): Promise<string[]> {
   const data = await stepFunctionsClient.send(command);
 
   // Catches the case when state machine is undefined (required)
-  return (data.stateMachines || [])
-  .map(sm => sm.name)
-  // handles potential undefined values (required)
-  .filter((name): name is string => name !== undefined);
-
+  return (
+    (data.stateMachines || [])
+      .map((sm) => sm.name)
+      // handles potential undefined values (required)
+      .filter((name): name is string => name !== undefined)
+  );
 }
 
 // Delete existing workflows
