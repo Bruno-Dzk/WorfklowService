@@ -67,7 +67,6 @@ router.get(
     try {
         // Creating ARN of the state machine
         await deleteWorkflow(workflowName)
-
         res.status(200).json({ message: `Workflow ${workflowName} deleted successfully from AWS` });
 
     }catch (error: any) {

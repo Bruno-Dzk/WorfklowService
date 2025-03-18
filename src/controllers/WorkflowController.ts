@@ -38,15 +38,10 @@ export async function createWorkflow(workflowDefinition): Promise<any> {
     roleArn: ROLE_ARN,
   };
 
-  try {
-    const command = new CreateStateMachineCommand(params);
-    const response = await stepFunctionsClient.send(command);
-    console.log("State machine created successfully:", response);
-    return response;
-  } catch (error) {
-    console.error("Error creating state machine:", error);
-    throw error;
-  }
+  const command = new CreateStateMachineCommand(params);
+  const response = await stepFunctionsClient.send(command);
+  console.log("State machine created successfully:", response);
+  return response;
 }
 
 // List all existing workflows
@@ -64,31 +59,18 @@ export async function getWorkflows(): Promise<string[]> {
 
 // Delete existing workflows
 export async function deleteWorkflow(workflowName: string) {
-    try {
-        const stateMachineArn = `arn:aws:states:${LAMBDA_REGION}:${AWS_ACCOUNT}:stateMachine:${workflowName}`;
-
-        const command = new DeleteStateMachineCommand({ stateMachineArn });
-        await stepFunctionsClient.send(command);
-
-        console.log(`Workflow ${workflowName} deleted successfully`);
-        return { message: `Workflow ${workflowName} deleted successfully` };
-    } catch (error: any) {
-        console.error("Error deleting workflow:", error);
-        throw new Error(error.message);
-    }
+  // Build ARN of the machine
+  const stateMachineArn = `arn:aws:states:${LAMBDA_REGION}:${AWS_ACCOUNT}:stateMachine:${workflowName}`;
+  const command = new DeleteStateMachineCommand({ stateMachineArn });
+  await stepFunctionsClient.send(command);
+  console.log(`Workflow ${workflowName} deleted successfully`);
 }
 
 // Get Workflow (State Machine) Description (json) from AWS
 export async function getWorkflowDescription(workflowName: string) {
-  try {
-      const stateMachineArn = `arn:aws:states:${LAMBDA_REGION}:${AWS_ACCOUNT}:stateMachine:${workflowName}`;
-
-      const command = new DescribeStateMachineCommand({ stateMachineArn });
-      const response = await stepFunctionsClient.send(command);
-
-      return JSON.parse(response.definition);
-  } catch (error: any) {
-      console.error("Error fetching state machine details:", error);
-      throw new Error(error.message);
-  }
+  // Build ARN of the machine
+  const stateMachineArn = `arn:aws:states:${LAMBDA_REGION}:${AWS_ACCOUNT}:stateMachine:${workflowName}`;
+  const command = new DescribeStateMachineCommand({ stateMachineArn });
+  const response = await stepFunctionsClient.send(command);
+  return JSON.parse(response.definition);
 }
