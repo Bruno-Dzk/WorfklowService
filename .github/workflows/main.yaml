@@ -22,22 +22,20 @@ jobs:
 
     - name: Build docker
       run: |
-        docker build . --platform linux/amd64 -t devops15/workflow-service
-
-    - name: Docker Retag
-      run: |
-        docker tag devops15/workflow-service:latest 314146339425.dkr.ecr.eu-central-1.amazonaws.com/devops15/workflow-service:latest
+        docker build . --platform linux/amd64 -t 314146339425.dkr.ecr.eu-central-1.amazonaws.com/devops15/workflow-service
 
     - name: AWS Configure Credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-region: eu-central-1
-        role-to-assume: arn:aws:iam::314146339425:role/WorkflowServicePushGithubAction
-        role-session-name: WorkflowServicePushSession
+        role-to-assume: arn:aws:iam::314146339425:role/PushDockerImageECR
+        role-session-name: PushDockerImageECR
 
-    - name: Login to ECR
-      run: |
-        aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 314146339425.dkr.ecr.eu-central-1.amazonaws.com
+    - name: Login to Amazon ECR
+      uses: aws-actions/amazon-ecr-login@v1
+      with:
+        mask-password: true
+        skip-logout: false
         
     - name: Push Docker Image
       run : |
@@ -54,10 +52,10 @@ jobs:
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-region: eu-central-1
-        role-to-assume: arn:aws:iam::314146339425:role/WorkflowServicePushGithubAction
-        role-session-name: WorkflowServicePushSession
+        role-to-assume: arn:aws:iam::314146339425:role/UpdateECSTask
+        role-session-name: UpdateECSTask
 
-    - name: Stop running task
+    - name: Stop running tasks
       run: |
         TASKS=$(aws ecs list-tasks --cluster BigTuna --family workflow-service --query "taskArns[]" --output text)
         for TASK in $TASKS; do
