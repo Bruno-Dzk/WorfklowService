@@ -1,5 +1,6 @@
-import express from "express";
+import express from 'express';
 import HealthCheckRouter from "./routes/HealthCheckRouter.js";
+import WorkflowRouter from "./routes/WorkflowRouter.js"
 import WorkflowDeploymentRouter from "./routes/WorkflowDeploymentRouter.js";
 
 const app = express();
@@ -9,10 +10,11 @@ const mainRouter = express.Router();
 
 mainRouter.use("/healthcheck", HealthCheckRouter);
 mainRouter.use("/workflow-deployment", WorkflowDeploymentRouter);
+mainRouter.use("/workflow", WorkflowRouter)
 
 app.use(express.json());
-app.use("/workflow-service", mainRouter);
 
+app.use("/workflow-service", mainRouter);
 app.use((err, req, res, next) => {
   // Log the error stack for debugging
   console.error(err.stack);
@@ -23,4 +25,5 @@ app.use((err, req, res, next) => {
 
 app.listen(port, () => {
   return console.log(`Express is listening at http://localhost:${port}`);
+
 });
