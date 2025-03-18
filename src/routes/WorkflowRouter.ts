@@ -5,18 +5,21 @@ import {
     getWorkflows}
     from '../controllers/WorkflowController.js';
 import { Router, Request, Response } from 'express';
-import AWS from 'aws-sdk';
+import { authorizeOrganization } from "../middlewares/AuthorizeOrganizationMiddleware.js";
+import { authorizeJwt } from "../middlewares/AuthorizeJwt.js";
 
  const router = Router();
- const stepfunctions = new AWS.StepFunctions();
 
-
- router.put('/', async(req: Request, res: Response) => {
+ router.put(
+    "/organizations/:organization/workflow",
+    authorizeJwt,
+    authorizeOrganization,
+    async(req: Request, res: Response) => {
     console.log("PUT /workflow called");
     try{
         const workflowDefinition = req.body;
 
-        // VALIDATION MISSING, add later
+        // VALIDATION MISSING, add later if I feel like it
 
         const result = await createWorkflow(workflowDefinition)
 
@@ -34,7 +37,11 @@ import AWS from 'aws-sdk';
     }
 });
 
-router.get('/', async(req: Request, res: Response) => {
+router.get(
+    "/organizations/:organization/workflow",
+    authorizeJwt,
+    authorizeOrganization,
+    async(req: Request, res: Response) => {
     console.log("GET /workflow called");
     try {
         // List state machines using AWS Step Functions API
@@ -49,7 +56,11 @@ router.get('/', async(req: Request, res: Response) => {
     }
   });
 
-  router.delete('/:workflowName', async (req: Request, res: Response) => {
+  router.delete(
+    "/organizations/:organization/workflow/:workflowName",
+    authorizeJwt,
+    authorizeOrganization,
+    async(req: Request, res: Response) => {
     const { workflowName } = req.params;
     console.log(`DELETE /${workflowName} called`);
 
@@ -66,7 +77,11 @@ router.get('/', async(req: Request, res: Response) => {
 
     });
 
-  router.get('/:workflowName', async(req: Request, res: Response) => {
+  router.get(
+    "/organizations/:organization/workflow/:workflowName",
+    authorizeJwt,
+    authorizeOrganization,
+    async(req: Request, res: Response) => {
     const { workflowName } = req.params;
     console.log(`GET /${workflowName} called`);
 

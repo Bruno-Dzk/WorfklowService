@@ -10,7 +10,7 @@ const mainRouter = express.Router();
 
 mainRouter.use("/healthcheck", HealthCheckRouter);
 mainRouter.use(WorkflowDeploymentRouter);
-mainRouter.use("/workflow", WorkflowRouter)
+mainRouter.use(WorkflowRouter)
 
 app.use(express.json());
 
