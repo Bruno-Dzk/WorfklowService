@@ -3,16 +3,16 @@ import {
   deleteWorkflow,
   getWorkflowDescription,
   getWorkflows,
-} from "../controllers/WorkflowController.js";
+} from "../clients/StepFunctionsClient.js";
 import { Router, Request, Response } from "express";
 import { authorizeOrganization } from "../middlewares/AuthorizeOrganizationMiddleware.js";
-import { authorizeJwt } from "../middlewares/AuthorizeJwt.js";
+import { authenticateJwt } from "../middlewares/AuthenticateJwt.js";
 
 const router = Router();
 
 router.put(
   "/organizations/:organization/workflow",
-  authorizeJwt,
+  authenticateJwt,
   authorizeOrganization,
   async (req: Request, res: Response) => {
     console.log("PUT /workflow called");
@@ -39,7 +39,7 @@ router.put(
 
 router.get(
   "/organizations/:organization/workflow",
-  authorizeJwt,
+  authenticateJwt,
   authorizeOrganization,
   async (req: Request, res: Response) => {
     console.log("GET /workflow called");
@@ -59,7 +59,7 @@ router.get(
 
 router.delete(
   "/organizations/:organization/workflow/:workflowName",
-  authorizeJwt,
+  authenticateJwt,
   authorizeOrganization,
   async (req: Request, res: Response) => {
     const { workflowName } = req.params;
@@ -82,7 +82,7 @@ router.delete(
 
 router.get(
   "/organizations/:organization/workflow/:workflowName",
-  authorizeJwt,
+  authenticateJwt,
   authorizeOrganization,
   async (req: Request, res: Response) => {
     const { workflowName } = req.params;

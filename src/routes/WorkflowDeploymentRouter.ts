@@ -3,13 +3,13 @@ import * as WorkflowDeploymentService from "../services/WorkflowDeploymentServic
 import { workflowDeploymentRequestSchema } from "../schemas/WorkflowDeploymentRequestSchema.js";
 import { NotFoundError } from "../services/WorkflowDeploymentService.js";
 import { authorizeOrganization } from "../middlewares/AuthorizeOrganizationMiddleware.js";
-import { authorizeJwt } from "../middlewares/AuthorizeJwt.js";
+import { authenticateJwt } from "../middlewares/AuthenticateJwt.js";
 
 const router = express.Router();
 
 router.post(
   "/organizations/:organization/deployments",
-  authorizeJwt,
+  authenticateJwt,
   authorizeOrganization,
   async (req, res, next) => {
     const deployment = workflowDeploymentRequestSchema.safeParse(req.body);
@@ -30,7 +30,7 @@ router.post(
 
 router.get(
   "/organizations/:organization/deployments/:id",
-  authorizeJwt,
+  authenticateJwt,
   authorizeOrganization,
   async (req, res, next) => {
     try {
@@ -50,7 +50,7 @@ router.get(
 
 router.delete(
   "/organizations/:organization/deployments/:id",
-  authorizeJwt,
+  authenticateJwt,
   authorizeOrganization,
   async (req, res, next) => {
     try {

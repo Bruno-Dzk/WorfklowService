@@ -2,6 +2,7 @@ import express from "express";
 import HealthCheckRouter from "./routes/HealthCheckRouter.js";
 import WorkflowRouter from "./routes/WorkflowRouter.js";
 import WorkflowDeploymentRouter from "./routes/WorkflowDeploymentRouter.js";
+import WorkflowRunRouter from "./routes/WorkflowRunRouter.js";
 
 const app = express();
 const port = 3000;
@@ -11,6 +12,7 @@ const mainRouter = express.Router();
 mainRouter.use("/healthcheck", HealthCheckRouter);
 mainRouter.use(WorkflowDeploymentRouter);
 mainRouter.use(WorkflowRouter);
+mainRouter.use(WorkflowRunRouter);
 
 app.use(express.json());
 

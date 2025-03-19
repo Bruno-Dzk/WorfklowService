@@ -5,6 +5,8 @@ import {
   DeleteStateMachineCommand,
   DescribeStateMachineCommand,
   ListStateMachinesCommand,
+  StartExecutionCommand,
+  DescribeExecutionCommand,
 } from "@aws-sdk/client-sfn";
 import * as AwsUtils from "../utils/AwsUtils.js";
 import dotenv from "dotenv";
@@ -73,4 +75,20 @@ export async function getWorkflowDescription(workflowName: string) {
   const command = new DescribeStateMachineCommand({ stateMachineArn });
   const response = await stepFunctionsClient.send(command);
   return JSON.parse(response.definition);
+}
+
+export async function createWorkflowRun(workflowName: string) {
+  const stateMachineArn = `arn:aws:states:${LAMBDA_REGION}:${AWS_ACCOUNT}:stateMachine:${workflowName}`;
+  const command = new StartExecutionCommand({
+    stateMachineArn,
+  });
+  const response = await stepFunctionsClient.send(command);
+  return response.executionArn;
+}
+
+export async function getWorkflowRun(executionArn: string) {
+  const command = new DescribeExecutionCommand({
+    executionArn,
+  });
+  return await stepFunctionsClient.send(command);
 }
