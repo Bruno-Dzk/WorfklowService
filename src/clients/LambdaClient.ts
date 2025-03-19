@@ -14,7 +14,7 @@ const LAMBDA_REGION = "eu-central-1";
 const AWS_ROLE_ARN = "arn:aws:iam::314146339425:role/LambdaBasicExecutionRole";
 const SOURCE_CODE_S3_BUCKET =
   "module-bucket-a60555b5-a452-46d5-8a9f-5248d2dc41a5";
-const TIMEOUT_MINUTES = 3;
+const TIMEOUT_SECONDS = 180;
 const MEMORY_MB = 1024;
 
 const client = new LambdaClient({
@@ -49,7 +49,7 @@ export async function createLambda(
     PackageType: PackageType.Zip,
     Runtime: Runtime.python311,
     MemorySize: MEMORY_MB,
-    Timeout: TIMEOUT_MINUTES,
+    Timeout: TIMEOUT_SECONDS,
   });
 
   const { FunctionArn } = await client.send(command);
