@@ -33,7 +33,7 @@ export async function deleteLambda(lambdaName: string) {
 export async function createLambda(
   s3Key: string,
   lambdaName: string,
-  layerArn: string,
+  layerArn?: string,
 ) {
   const command = new CreateFunctionCommand({
     Code: {
@@ -41,7 +41,7 @@ export async function createLambda(
       S3Key: s3Key,
     },
     Publish: true,
-    Layers: [layerArn],
+    Layers: layerArn ? [layerArn] : [],
     FunctionName: lambdaName,
     Role: AWS_ROLE_ARN,
     Architectures: [Architecture.x86_64],

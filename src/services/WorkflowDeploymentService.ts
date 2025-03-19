@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 
 const LAYER_POSTFIX = "-layer.zip";
 
-export class ResourceDefiniton {
+export class ResourceDefinition {
   arn: string;
   name: string;
 
@@ -17,13 +17,13 @@ export class ResourceDefiniton {
 
 export class WorkflowDeployment {
   id: string;
-  functions: ResourceDefiniton[];
-  layer: ResourceDefiniton;
+  functions: ResourceDefinition[];
+  layer?: ResourceDefinition;
 
   constructor(
     id: string,
-    functions: ResourceDefiniton[],
-    layer: ResourceDefiniton,
+    functions: ResourceDefinition[],
+    layer: ResourceDefinition,
   ) {
     this.id = id;
     this.functions = functions;
@@ -41,7 +41,7 @@ export class NotFoundError extends Error {
 export async function createDeployment(deployment: WorkflowDeploymentRequest) {
   const deploymentId = uuidv4();
   const layerResourceDefinition = await deployLayer(deployment);
-  const { arn: layerArn } = layerResourceDefinition;
+  const layerArn = layerResourceDefinition ? layerResourceDefinition.arn : null;
   const lambdaResourceDefinitions = await deployLambdas(deployment, layerArn);
   const workflowDeployment = new WorkflowDeployment(
     deploymentId,
@@ -70,33 +70,40 @@ export async function getDeployment(id: string) {
 
 async function deployLambdas(
   deployment: WorkflowDeploymentRequest,
-  layerArn: string,
+  layerArn?: string,
 ) {
   const lambdas = deployment.modules.filter(
     (path) => !path.endsWith(LAYER_POSTFIX),
   );
 
-  const resourceDefinitions: ResourceDefiniton[] = [];
+  const resourceDefinitions: ResourceDefinition[] = [];
   for (const s3key of lambdas) {
     const lambdaName = uuidv4();
     const arn = await LambdaClient.createLambda(s3key, lambdaName, layerArn);
 
     const lambdaHumanReadableName = s3key.split(".").at(0).split("/").at(-1);
     resourceDefinitions.push(
-      new ResourceDefiniton(arn, lambdaHumanReadableName),
+      new ResourceDefinition(arn, lambdaHumanReadableName),
     );
   }
   return resourceDefinitions;
 }
 
-async function deployLayer(deployment: WorkflowDeploymentRequest) {
+async function deployLayer(
+  deployment: WorkflowDeploymentRequest,
+): Promise<ResourceDefinition | null> {
   const layers = deployment.modules.filter((path) =>
     path.endsWith(LAYER_POSTFIX),
   );
 
-  if (layers.length != 1) {
-    throw Error("Layers count should be 1");
+  if (layers.length > 1) {
+    throw Error("Layers count should not be greater than 1");
   }
+
+  if (layers.length === 0) {
+    return null;
+  }
+
   const [layerKey] = layers;
   const layerHumanReadableName = layerKey.split(".").at(0).split("/").at(-1);
   const layerName = uuidv4();
@@ -105,5 +112,5 @@ async function deployLayer(deployment: WorkflowDeploymentRequest) {
     layerName,
   );
 
-  return new ResourceDefiniton(LayerVersionArn, layerHumanReadableName);
+  return new ResourceDefinition(LayerVersionArn, layerHumanReadableName);
 }
