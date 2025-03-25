@@ -22,13 +22,13 @@ jobs:
 
     - name: Build docker
       run: |
-        docker build . --platform linux/amd64 -t 314146339425.dkr.ecr.eu-central-1.amazonaws.com/devops15/workflow-service
+        docker build . --platform linux/amd64 -t ${{secrets.AWS_ACCOUNT_NUMBER}}.dkr.ecr.eu-central-1.amazonaws.com/devops15/workflow-service
 
     - name: AWS Configure Credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-region: eu-central-1
-        role-to-assume: arn:aws:iam::314146339425:role/PushDockerImageECR
+        role-to-assume: arn:aws:iam::{{secrets.AWS_ACCOUNT_NUMBER}}:role/PushDockerImageECR
         role-session-name: PushDockerImageECR
 
     - name: Login to Amazon ECR
@@ -39,7 +39,7 @@ jobs:
         
     - name: Push Docker Image
       run : |
-        docker push 314146339425.dkr.ecr.eu-central-1.amazonaws.com/devops15/workflow-service:latest
+        docker push {{secrets.AWS_ACCOUNT_NUMBER}}.dkr.ecr.eu-central-1.amazonaws.com/devops15/workflow-service:latest
 
   deploy_to_ECS:
     needs: build_and_push_to_ECR
@@ -52,7 +52,7 @@ jobs:
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-region: eu-central-1
-        role-to-assume: arn:aws:iam::314146339425:role/UpdateECSTask
+        role-to-assume: arn:aws:iam::{{secrets.AWS_ACCOUNT_NUMBER}}:role/UpdateECSTask
         role-session-name: UpdateECSTask
 
     - name: Stop running tasks
